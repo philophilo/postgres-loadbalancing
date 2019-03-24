@@ -1,0 +1,50 @@
+{
+    "variables": {
+        "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+        "project_id": "{{env `PROJECT_ID`}}"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "{{ user `service_account_json` }}",
+            "project_id": "{{ user `project_id` }}",
+            "source_image": "ubuntu-1604-xenial-v20180109",
+            "zone": "europe-west1-b",
+            "ssh_username": "packer",
+            "image_name": "philo-postgres-slave"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+		    "source": "../db_configs/postgresql.conf",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+		    "source": "../db_configs/pg_hba.conf",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+		    "source": "../db_configs/recovery.conf",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+            "source": "./start_up.sh",
+            "destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+            "source": "../db_configs/install.sh",
+            "destination": "/tmp/install.sh"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "/bin/bash /tmp/install.sh"
+            ]
+        }
+    ]
+}
