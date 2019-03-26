@@ -1,1 +1,9 @@
+*.*-e
+.env
 google-creds-sandbox.json
+images/haproxy/haproxy.cfg
+images/db_configs/recovery.conf
+terraform/main.tf
+images/slave/start_up.sh
+terraform/terraform.*
+terraform/.terraform/

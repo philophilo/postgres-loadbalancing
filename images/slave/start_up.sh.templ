@@ -3,7 +3,7 @@
 create_recovery_file() {
 cat << 'EOF' | sudo tee -a /var/lib/postgresql/9.6/main/recovery.conf >> /dev/null
 standby_mode = 'on'
-primary_conninfo = 'host=35.233.117.11 port=5432 user=replication password=password'
+primary_conninfo = 'host=$(MASTER_IP) port=5432 user=replication password=password'
 trigger_file = '/var/lib/postgresql/9.6/trigger'
 restore_command = 'cp /var/lib/postgresql/9.6/archive/%f "%p"'
 EOF
@@ -35,12 +35,12 @@ setup_slave() {
     sudo su - postgres -c "chmod 700 /var/lib/postgresql/9.6/main/"
 
 	# initialize backup
-	echo "35.233.117.11:5432:replica:postgres:password" > /var/lib/postgresql/.pgpass
-	echo "35.233.117.11:5432:replica:postgres:password" > .pgpass
+	echo "$(MASTER_IP):5432:replica:postgres:password" > /var/lib/postgresql/.pgpass
+	echo "$(MASTER_IP):5432:replica:postgres:password" > .pgpass
 	sudo chmod 600 /var/lib/postgresql/.pgpass
 	sudo chmod 600 .pgpass
 	sudo chown postgres.postgres /var/lib/postgresql/.pgpass
-    sudo -u postgres pg_basebackup -h 35.233.117.11 -D /var/lib/postgresql/9.6/main -U replica -v --xlog-method=stream
+    sudo -u postgres pg_basebackup -h $(MASTER_IP) -D /var/lib/postgresql/9.6/main -U replica -v --xlog-method=stream
 	# configure recovery
     create_recovery_file
 	# start slave server

@@ -1,0 +1,50 @@
+{
+    "variables": {
+        "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+        "project_id": "{{env `PROJECT_ID`}}"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "{{ user `service_account_json` }}",
+            "project_id": "{{ user `project_id` }}",
+            "source_image": "ubuntu-1604-xenial-v20180109",
+            "zone": "europe-west1-b",
+            "ssh_username": "packer",
+            "image_name": "philo-haproxy"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+		    "source": "./haproxy.cfg.templ",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+		    "source": "./start_up.sh",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+		    "source": "../../variables.sh",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+		    "source": "../../supply_values.sh",
+			"destination": "/home/packer/"
+        },
+        {
+            "type": "file",
+            "source": "./install.sh",
+            "destination": "/tmp/install.sh"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "/bin/bash /tmp/install.sh"
+            ]
+        }
+    ]
+}

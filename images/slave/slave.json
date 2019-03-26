@@ -17,34 +17,13 @@
     "provisioners": [
         {
             "type": "file",
-		    "source": "../db_configs/postgresql.conf",
-			"destination": "/home/packer/"
-        },
-        {
-            "type": "file",
-		    "source": "../db_configs/pg_hba.conf",
-			"destination": "/home/packer/"
-        },
-        {
-            "type": "file",
-		    "source": "../db_configs/recovery.conf",
-			"destination": "/home/packer/"
-        },
-        {
-            "type": "file",
             "source": "./start_up.sh",
             "destination": "/home/packer/"
         },
         {
             "type": "file",
             "source": "../db_configs/install.sh",
-            "destination": "/tmp/install.sh"
-        },
-        {
-            "type": "shell",
-            "inline": [
-                "/bin/bash /tmp/install.sh"
-            ]
+            "destination": "/home/packer/"
         }
     ]
 }

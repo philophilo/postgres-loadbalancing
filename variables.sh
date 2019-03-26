@@ -1,0 +1,30 @@
+# create array of variables in template files
+create_variables (){
+    VARIABLES+=(
+    MASTER_IP
+    SLAVE1_IP
+    SLAVE2_IP
+    HAPROXY_USERNAME
+    HAPROXY_PASSWORD
+    master_ip
+    slave1_ip
+    slave2_ip
+    haproxy_ip
+    service_account_path
+    project_id
+    gcloud_zone
+    region
+    haproxy_name
+    machine_type
+    haproxy_image
+    master_name
+    master_image
+    slave1_name
+    slave2_name
+    slave_image
+    haproxy_startup_script
+    master_startup_script
+    slave_startup_script
+    )
+}
+create_variables
