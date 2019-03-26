@@ -80,7 +80,4 @@ main(){
 # set array of template variables
 source variables.sh
 
-# export environment variables
-export $(cat .env | xargs)
-
 main $@

@@ -11,7 +11,7 @@ setup_master() {
 	sudo systemctl restart postgresql
 
 	# replication user with replication roles
-	sudo -u postgres psql -c "CREATE USER replica REPLICATION LOGIN ENCRYPTED PASSWORD 'password';"
+	sudo -u postgres psql -c "CREATE USER replica REPLICATION;"
 
 	# stop postgresql, allow replication to start
 	sudo systemctl stop postgresql
@@ -29,7 +29,8 @@ setup_master() {
 	sudo chown postgres.postgres /var/lib/postgresql/9.6/archive/
 
 	# allow replication user
-	sudo echo "host    replication     replica          0.0.0.0\/0            md5" >> /etc/postgresql/9.6/main/pg_hba.conf
+	#sudo sed -i -e "s/#host    replication     postgres/host    replication     replica/" /etc/postgresql/9.6/main/pg_hba.conf
+	sudo sed -i -e "$ a host     replication     replica         all                     trust" /etc/postgresql/9.6/main/pg_hba.conf
 
 	# Restart the postgres 
 	sudo systemctl start postgresql

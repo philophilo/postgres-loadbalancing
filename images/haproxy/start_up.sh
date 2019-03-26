@@ -11,6 +11,8 @@ get_values() {
     echo "MASTER_IP=\"$(get_instance_metadata "MASTER_IP")\"" >> .env
     echo "SLAVE1_IP=\"$(get_instance_metadata "SLAVE1_IP")\"" >> .env
     echo "SLAVE2_IP=\"$(get_instance_metadata "SLAVE2_IP")\"" >> .env
+    echo "HAPROXY_USERNAME=\"$(get_instance_metadata "HAPROXY_USERNAME")\"" >> .env
+    echo "HAPROXY_PASSWORD=\"$(get_instance_metadata "HAPROXY_PASSWORD")\"" >> .env
 }
 
 fill_template() {

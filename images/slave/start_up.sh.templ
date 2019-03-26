@@ -3,12 +3,12 @@
 create_recovery_file() {
 cat << 'EOF' | sudo tee -a /var/lib/postgresql/9.6/main/recovery.conf >> /dev/null
 standby_mode = 'on'
-primary_conninfo = 'host=$(MASTER_IP) port=5432 user=replication password=password'
+primary_conninfo = 'host=$(MASTER_IP) port=5432 user=replication'
 trigger_file = '/var/lib/postgresql/9.6/trigger'
 restore_command = 'cp /var/lib/postgresql/9.6/archive/%f "%p"'
 EOF
-sudo su - postgres -c "chmod 600 /var/lib/postgresql/9.6/main/recovery.conf"
-sudo su - postgres -c "chown postgres.postgres /var/lib/postgresql/9.6/main/recovery.conf"
+sudo chmod 600 /var/lib/postgresql/9.6/main/recovery.conf
+sudo chown postgres.postgres /var/lib/postgresql/9.6/main/recovery.conf
 }
 
 setup_slave() {
@@ -27,20 +27,20 @@ setup_slave() {
 	sudo sed -i -e "s/#wal_keep_segments = 0/wal_keep_segments = 32/" /etc/postgresql/9.6/main/postgresql.conf
 	sudo sed -i -e "s/#hot_standby = off/hot_standby = on/" /etc/postgresql/9.6/main/postgresql.conf
 
-	# Restart the postgres 
-	sudo systemctl start postgresql
-	sudo systemctl restart postgresql
-    sudo su - postgres -c "mv /var/lib/postgresql/9.6/main/ /var/lib/postgresql/9.6/ main-bekup"
-    sudo su - postgres -c "mkdir /var/lib/postgresql/9.6/main/"
-    sudo su - postgres -c "chmod 700 /var/lib/postgresql/9.6/main/"
+    sudo mv /var/lib/postgresql/9.6/main /var/lib/postgresql/9.6/main-bekup
+    sudo mkdir /var/lib/postgresql/9.6/main/
+    sudo chmod 700 /var/lib/postgresql/9.6/main/
+	sudo chown postgres.postgres /var/lib/postgresql/9.6/main/
 
 	# initialize backup
-	echo "$(MASTER_IP):5432:replica:postgres:password" > /var/lib/postgresql/.pgpass
-	echo "$(MASTER_IP):5432:replica:postgres:password" > .pgpass
-	sudo chmod 600 /var/lib/postgresql/.pgpass
+	echo "$(MASTER_IP):5432:postgres:replica:password" > .pgpass
 	sudo chmod 600 .pgpass
+	sudo cp .pgpass /var/lib/postgresql/.pgpass
 	sudo chown postgres.postgres /var/lib/postgresql/.pgpass
-    sudo -u postgres pg_basebackup -h $(MASTER_IP) -D /var/lib/postgresql/9.6/main -U replica -v --xlog-method=stream
+	export PGPASSWORD="password"
+	export PGPASSFILE="/home/packer/.pgpass"
+    sudo su - postgres -c "pg_basebackup -h $(MASTER_IP) -D /var/lib/postgresql/9.6/main -U replica -w -v --xlog-method=stream"
+
 	# configure recovery
     create_recovery_file
 	# start slave server

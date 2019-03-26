@@ -1,0 +1,53 @@
+module "firewall" {
+    source              = "./firewall"
+    service_account_path= "$(service_account_path)"
+    project_id          = "$(project_id)"
+    region              = "$(region)"
+    gcloud_zone         = "$(gcloud_zone)"
+}
+
+module "slave" {
+    source              = "./slave"
+    slave1_name         = "$(slave1_name)"
+    slave2_name         = "$(slave2_name)"
+    machine_type        = "$(machine_type)"
+    gcloud_zone         = "$(gcloud_zone)"
+    slave_image         = "$(slave_image)"
+    slave1_ip           = "$(slave1_ip)"
+    slave2_ip           = "$(slave2_ip)" 
+    service_account_path= "$(service_account_path)"
+    project_id          = "$(project_id)"
+    region              = "$(region)"
+    startup_script      = "$(slave_startup_script)"
+}
+
+module "master" {
+    source              = "./master"
+    master_name         = "$(master_name)"
+    machine_type        = "$(machine_type)"
+    gcloud_zone         = "$(gcloud_zone)"
+    master_image        = "$(master_image)"
+    master_ip           = "$(master_ip)"
+    service_account_path= "$(service_account_path)"
+    project_id          = "$(project_id)"
+    region              = "$(region)"
+    startup_script      = "$(master_startup_script)"
+}
+
+module "haproxy" {
+    source              = "./haproxy"
+    haproxy_name        = "$(haproxy_name)"
+    haproxy_username    = "$(haproxy_username)"
+    haproxy_password    = "$(haproxy_password)"
+    machine_type        = "$(machine_type)"
+    gcloud_zone         = "$(gcloud_zone)"
+    haproxy_image       = "$(haproxy_image)"
+    haproxy_ip          = "$(haproxy_ip)"
+    master_ip           = "$(master_ip)"
+    slave1_ip           = "$(slave1_ip)"
+    slave2_ip           = "$(slave2_ip)" 
+    service_account_path= "$(service_account_path)"
+    project_id          = "$(project_id)"
+    region              = "$(region)"
+    startup_script      = "$(haproxy_startup_script)"
+}

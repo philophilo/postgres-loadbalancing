@@ -10,6 +10,8 @@ create_variables (){
     slave1_ip
     slave2_ip
     haproxy_ip
+    haproxy_username
+    haproxy_password
     service_account_path
     project_id
     gcloud_zone
